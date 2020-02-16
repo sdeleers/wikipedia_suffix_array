@@ -1,6 +1,7 @@
 #include "external_merge_sort.h"
 #include "priority_files_reader.h"
 #include "sequential_files_reader.h"
+#include "sequential_files_writer.h"
 
 #include <algorithm>
 #include <cmath>
@@ -18,68 +19,53 @@ std::vector<File> ExternalMergeSort<T>::sort(const std::vector<File>& files_in) 
 
   SequentialFilesReader<long long> files_in_reader(files_in);
 
-  // Round up.
-  const std::size_t num_buffers = std::ceil((double) total_file_length / num_elements_in_RAM);
-  const std::size_t buffer_size = num_elements_in_RAM;
-
-  // Make <num_buffers> buffers of size num_elements_in_RAM,
-  // and sort each buffer separately
+  // Make buffers of size num_elements_in_RAM
   std::vector<File> files_sorted;
-  std::size_t total_num_read = 0;
-  int output_file_index = 0;
-  while (total_num_read < total_file_length) {
-    // num_to_read will be the number of elements in the sorted output file.
-    std::size_t num_to_read = std::min(buffer_size, total_file_length - total_num_read);
+  files_sorted.reserve(total_file_length / num_elements_in_RAM);
+  std::size_t length_to_assign = total_file_length;
+  while (length_to_assign > 0) {
+    const std::size_t file_length = std::min(num_elements_in_RAM, length_to_assign);
+    if (file_length != 0) {
+      files_sorted.push_back({ "/tmp/sorted_" + std::to_string(files_sorted.size()), file_length });
+      length_to_assign -= file_length;
+    }
+  }
+  SequentialFilesWriter<long long> sorted_files_writer(files_sorted);
+
+  // Read input files, sort them and write to sorted files.
+  for (File file_sorted : files_sorted) {
+    std::size_t num_to_read = file_sorted.length;
     std::vector<T> elements;
     elements.reserve(num_to_read);
-    std::size_t num_read = 0;
-    // Read <num_to_read> elements from input files (potentially multiple ones).
+
     T element;
-    while (num_read < num_to_read && files_in_reader.read(element)) {
+    for (int i = 0; i < num_to_read; ++i) {
+      files_in_reader.read(element);
       elements.push_back(element);
-      ++num_read;
     }
     std::sort(elements.begin(), elements.end());
 
     // Write sorted elements to file.
-    File file_sorted = { "/tmp/sorted_" + std::to_string(output_file_index), elements.size() };
-    files_sorted.push_back(file_sorted);
-    std::ofstream file_sorted_stream;
-    file_sorted_stream.open(file_sorted.name);
     for (T element : elements) {
-      file_sorted_stream << element << std::endl;
+      sorted_files_writer.write(element);
     }
-    file_sorted_stream.close();
-
-    total_num_read += num_to_read;
-    ++output_file_index;
   }
 
-  // -------------- Merge --------------
+  // Repeatedly read smallest element from sorted files and write to merged files.
   PriorityFilesReader<long long> files_sorted_reader(files_sorted);
-
-  int file_out_index = 0;
-  int file_out_element_index = 0;
-  std::vector<File> files_out = { { "/tmp/out_sorted_0", files_sorted[0].length } };
-  std::ofstream output_stream;
-  output_stream.open(files_out.back().name);
+  std::vector<File> files_merged;
+  files_merged.reserve(files_sorted.size());
+  for (int i = 0; i < files_sorted.size(); ++i) {
+    files_merged.push_back({ "/tmp/merged_" + std::to_string(i), files_sorted[i].length });
+  }
+  SequentialFilesWriter<long long> files_merged_writer(files_merged);
 
   T element;
   while (files_sorted_reader.read(element)) {
-    // Write element to output file
-    if (file_out_element_index == files_out.back().length) {
-      file_out_element_index = 0;
-      ++file_out_index;
-      files_out.push_back({ "/tmp/out_sorted_" + std::to_string(file_out_index),
-                          files_sorted[file_out_index].length });
-      output_stream.close();
-      output_stream.open(files_out.back().name);
-    }
-    output_stream << element << std::endl;
-    ++file_out_element_index;
+    files_merged_writer.write(element);
   }
 
-  return files_out;
+  return files_merged;
 }
 
 template ExternalMergeSort<long long>::ExternalMergeSort(std::size_t num_elements);
