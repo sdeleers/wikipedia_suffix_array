@@ -1,0 +1,14 @@
+77 sec
+no optimization and pure C++ executable
+
+20 sec
+-O3 and calling from python with pybind
+
+
+14 sec 
+-O3 and calling from python with pybind but everything in 1 call, i.e.
+only one conversion from C++ to python object.
+
+12 sec
+-03 and pure C++ executable
+

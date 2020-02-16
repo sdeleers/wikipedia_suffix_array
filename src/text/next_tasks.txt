@@ -1,0 +1,9 @@
+- With 400MB file (whole_string.txt) we have a memory error. Why?
+  It should be large enough to fit into RAM. Actually I'm not sure
+  because num levels ~= 30 in this case and 400 * 30 MB = 12GB which
+  does not fit into RAM. Investigate this.
+
+-> When setting num_levels = 1 do we have a crash. Answer: Yes.
+
+- Implement proof of concept with external memory sorting.
+

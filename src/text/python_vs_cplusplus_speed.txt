@@ -1,0 +1,17 @@
+simon@nucbo:~/Dropbox/wikipedia_suffix_array$ ./a.out 
+373
+  For example, music imitates with the media of rhythm and harmony, whereas dance imitates with rhythm alone, and poetry with language. The forms also differ in their object of imitation. Comedy, for instance, is a dramatic imitation of men worse than average; whereas tragedy imitates men slightly better than average. Lastly, the forms differ in their manner of imitation
+Elapsed time: 80.3578
+simon@nucbo:~/Dropbox/wikipedia_suffix_array$ python longest_repeated_substring2.py 
+
+Command 'python' not found, but can be installed with:
+
+sudo apt install python3       
+sudo apt install python        
+sudo apt install python-minimal
+
+You also have python3 installed, you can run 'python3' instead.
+
+simon@nucbo:~/Dropbox/wikipedia_suffix_array$ python3 longest_repeated_substring2.py 
+^[[C  For example, music imitates with the media of rhythm and harmony, whereas dance imitates with rhythm alone, and poetry with language. The forms also differ in their object of imitation. Comedy, for instance, is a dramatic imitation of men worse than average; whereas tragedy imitates men slightly better than average. Lastly, the forms differ in their manner of imitation
+2846.2577333450317 seconds

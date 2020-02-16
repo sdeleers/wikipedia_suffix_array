@@ -1,0 +1,15 @@
+No compiler optimizations
+------------------------
+O(N log N)
+550
+ The goddesses chose to place the matter before Zeus, who, not wanting to favor one of the goddesses, put the choice into the hands of Paris, a Trojan prince. After bathing in the spring of Mount Ida where Troy was situated, the goddesses appeared before Paris for his decision. In the extant ancient depictions of the Judgement of Paris, Aphrodite is only occasionally represented nude, and Athena and Hera are always fully clothed. Since the Renaissance, however, western paintings have typically portrayed all three goddesses as completely naked. 
+Elapsed time: 500.118
+
+Karkkainen-Sanders
+Elapsed time: 36.1194
+
+
+
+with compiler optimizations
+O(N log N): 94 seconds
+Karkkainen-Sanders: 22 sec
