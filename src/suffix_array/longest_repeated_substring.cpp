@@ -18,7 +18,7 @@ vector<vector<int>> buildSuffixArray(const string& s) {
                           second_element }, i };
       }
     }
-    sort(elements.begin(), elements.end());
+    sort(elements.begin(), elements.end());  // Can be optimized using radix sort.
     int current = 0;
     for (int i = 0; i < N; ++i) {
       if (i > 0 && elements[i].first != elements[i - 1].first) ++current;
